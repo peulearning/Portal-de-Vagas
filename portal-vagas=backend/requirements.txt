@@ -1,0 +1,11 @@
+# --- API ---
+fastapi
+uvicorn[standard]
+
+# --- Banco de Dados e Validação ---
+sqlmodel
+
+# --- Scraping ---
+requests
+beautifulsoup4
+lxml
