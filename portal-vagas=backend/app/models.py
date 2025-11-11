@@ -1,9 +1,9 @@
-from sqlmodel import  SQLModel
+from sqlmodel import  SQLModel, Field
 from typing import Optional
 
 # Estrutura base para as vagas (campos que me ineressam na extração)
-class VagasBase(SQLModel):
-    titulo: str
+class VagaBase(SQLModel):
+    titulo: str = Field(index=True)
     empresa: str
     link: str
     origem: str
