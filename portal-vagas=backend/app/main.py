@@ -2,7 +2,8 @@
 #Importações necessárias
 from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
-from sqlmodel import Session
+from sqlmodel import Session, select
+from typing import List
 
 from .database import create_db_and_tables, get_session
 from .models import Vaga, VagaCreate, VagaRead
@@ -24,7 +25,12 @@ async def lifespan(app: FastAPI):
 
 
 #---------------------- CRIA INSTÂNCIA FastApi ---------
-app = FastAPI()
+app = FastAPI(
+    title="Portal de Vagas - Backend",
+    description="API para gerenciamento de vagas de emprego.",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 #--------------------------------------------
 
@@ -61,3 +67,20 @@ def create_vaga(*,
 
     # 5. Retorna a vaga criada (será convertida para VagaRead)
     return db_vaga
+
+@app.get("/vagas", response_model=List[VagaRead])
+def read_vagas(*, session: Session = Depends(get_session)):
+    """
+    Retorna todas as vagas do banco de dados.
+    """
+    print("INFO:     Listando todas as vagas...")
+
+    # 1. Cria uma consulta (query) para selecionar *todas* as vagas
+    query = select(Vaga)
+
+    # 2. Executa a consulta no banco usando a sessão
+    vagas = session.exec(query).all()
+
+    # 3. Retorna a lista de vagas
+    # (O FastAPI vai converter para o formato List[VagaRead])
+    return vagas
